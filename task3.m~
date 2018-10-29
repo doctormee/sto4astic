@@ -68,7 +68,6 @@ alphaVal = .05;
 
 % chi squared
 poisVec = poisbinrnd(lambda, moe, sampleSize);
-% poisVec = rand(sampleSize, 1);
 [empF, x] = ecdf(poisVec);
 expF = cdf('Poisson', x, lambda);
 chiSquare = sampleSize*sum((empF(3:end) - empF(2:end-1) - expF(3:end) + expF(2:end-1)).^2 ...
@@ -86,20 +85,19 @@ end
 % grid on;
 % grid minor;
 %% Norm Polar
-sampleSize = 1e5;
-clear ksi1 ksi2;
-[ksi1, ksi2] = normPolar(sampleSize);
-% ksi1 = normrnd(1, 10.1, sampleSize, 1);
-% ksi2 = normrnd(.75, 10, sampleSize, 1);
+sampleSize = 1e4;
+% [ksi1, ksi2] = normPolar(sampleSize);
+ksi1 = normrnd(0, 1, sampleSize, 1);
+ksi2 = normrnd(0, 10, sampleSize, 1);
 alphaVal = .05;
 % normplot(ksi1);
 % normplot(ksi2);
-if (studentNormCheck(ksi1, ksi2, alphaVal))
+if (studentNormCheck(ksi1, ksi2, 1 - alphaVal))
     disp('Passed t-Student test');
 else
     disp('Failed t-Student test');
 end
-if (fisherNormCheck(ksi1, ksi2, alphaVal))
+if (fisherNormCheck(ksi1, ksi2, 1 - alphaVal))
     disp('Passed Fisher test');
 else
     disp('Failed Fisher test');

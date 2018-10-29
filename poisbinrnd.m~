@@ -6,15 +6,13 @@ function [ res ] = poisbinrnd( lambda, moe, varargin )
         moe = 1e-5;
     end
     nTrials = floor(1./ moe);
-    memoryConst = 1e4;
+    memoryConst = 1e5;
     step = floor(nTrials / memoryConst);
     res = [];
     for i = 1:step
         res = [res; binornd(memoryConst, double(lambda * moe), [varargin{:}])];
     end;
-    modula = mod(nTrials, memoryConst);
-    if (modula ~= 0);
-    res = [res; binornd(modula, double(lambda * moe), [varargin{:}])];
-
+    res = [res;     
+           
 end
 

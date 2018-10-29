@@ -14,10 +14,10 @@ ecdf(cauchVec);
 xlim([-drawScale, drawScale]);
 ylim([0, 1]);
 %% 
-sampleSize = 1e4; 
+sampleSize = 1e5; 
 x0 = 0;
 gamma = 1;
-memoryConst = 1e5;
+memoryConst = 1e3;
 normVec = [];
 drawScale = 5;
 procentile = .9999;

@@ -20,24 +20,24 @@ end
 grid on;
 
 %% memorylessness histo
-sampleSize = 1e5;
+sampleSize = 1e4;
 prob = 0.2;
-maxLength = 1e4;
-stepNumber = 100;
+maxLength = 1e3;
+stepNumber = 1e1;
 drawScale = 20;
 n = 1:maxLength;
 geomVec = geomrnd(prob, sampleSize);
 figure();
 nameArray = { 'Normalization', 'BinWidth', 'EdgeColor', 'FaceAlpha', 'FaceColor'};
 baseValueArray = {'probability',1, 'black', .9, 'red'};
-valueArray = {'probability',.75, 'black',.5, 'cyan'};
+valueArray = {'probability',.5, 'black',.45, 'cyan'};
 hBase = histogram(geomVec);
 set(hBase, nameArray, baseValueArray);
 hold on;
 for (m = linspace(1, maxLength, stepNumber))
-    shiftedVec = geomVec(geomVec >= m);
+    shiftedVec = geomVec(geomVec >= m) - m;
     if ~isempty(shiftedVec)
-        hNew = histogram(geomVec);
+        hNew = histogram(shiftedVec);
         set(hNew, nameArray, valueArray);
     end
 end
