@@ -49,23 +49,43 @@ end
 meanP = mean(pValue)
 %% moments
 sampleSize = 1e4;
-moe = 1e-10;
+moe = 1e-6;
 testNumber = 10;
 eExp = 0.5;
 varExp = 1./8;
-ePlot = zeros(testNumber, 1);
-varPlot = zeros(testNumber, 1);
-x = 1:testNumber;
-for i = 1:testNumber
-    cant = cantrnd(sampleSize * 2.^i, moe);
-    eEmp = mean(cant);
-    varEmp = mean(cant.^2) - eEmp.^2;
-    ePlot(i) = abs(eEmp - eExp);
-    varPlot(i) = abs(varEmp - varExp);
-end
+cantVec = cantrnd(sampleSize, moe);
+sN = cumsum(cantVec);
+nVec = (1:sampleSize)';
+eEmp = sN ./ nVec;
+varEmp = cumsum(cantVec.^2) ./ nVec - eEmp .^2;
 figure();
-plot(x, ePlot);
+plot(nVec, eEmp);
+hold on;
+plot(nVec, repmat(eExp, sampleSize, 1), '--');
+set(gca,'Xscale','log');
 grid on;
+grid minor;
+
 figure();
-plot(x, varPlot);
+plot(nVec, varEmp);
+hold on;
+plot(nVec, repmat(varExp, sampleSize, 1), '--');
+set(gca,'Xscale','log');
 grid on;
+grid minor;
+% ePlot = zeros(testNumber, 1);
+% varPlot = zeros(testNumber, 1);
+% x = 1:testNumber;
+% for i = 1:testNumber
+%     cant = cantrnd(sampleSize * 2.^i, moe);
+%     eEmp = mean(cant);
+%     varEmp = mean(cant.^2) - eEmp.^2;
+%     ePlot(i) = abs(eEmp - eExp);
+%     varPlot(i) = abs(varEmp - varExp);
+% end
+% figure();
+% plot(x, ePlot);
+% grid on;
+% figure();
+% plot(x, varPlot);
+% grid on;

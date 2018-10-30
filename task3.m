@@ -73,7 +73,7 @@ poisVec = poisbinrnd(lambda, moe, sampleSize);
 expF = cdf('Poisson', x, lambda);
 chiSquare = sampleSize*sum((empF(3:end) - empF(2:end-1) - expF(3:end) + expF(2:end-1)).^2 ...
         ./ (expF(3:end) - expF(2:end-1)));
-if chiSquare < chi2inv(1 - alphaVal, sampleSize - 2)
+if pearsonCheck( sampleSize, 2, empF, expF, alphaVal )
     disp('Passed Pearson test');
 else
     disp('Falied Pearson test');

@@ -1,0 +1,89 @@
+%% LLN and CLT:
+maxSamplesX = 1e4;
+nSamplesStat = 1e1;
+mu = 1;
+sigma = 2;
+bound = 10;
+xVec = normrnd(mu, sigma, maxSamplesX, 1);
+n = length(xVec);
+sN = cumsum(xVec);
+nVec = (1:n)';
+cltVec = sqrt(n) * ( sN ./ nVec  - mu);
+% LLN 
+figure();
+meanVec = sN ./ nVec;
+plot(nVec, meanVec);
+hold on;
+plot(nVec, repmat(mu, 1, n), '--');
+grid on;
+grid minor;
+set(gca,'Xscale','log');
+
+%% CLT
+maxSamplesX = 1e3;
+nSamplesStat = 1e1;
+mu = 1/2;
+sigma = sqrt(1/12);
+xMat = zeros(nSamplesStat, maxSamplesX);
+errVec = zeros(maxSamplesX, 1);
+% xMat = normrnd(mu, sigma, nSamplesStat, maxSamplesX);
+% statMat = cumsum(xMat, 2);
+% for nSamplesX = 1:maxSamplesX
+%     statVec = sqrt(nSamplesX) * (statMat(:, nSamplesX) ./ nSamplesX - mu) / sigma;
+%     [empF, param] = ecdf(statVec);
+%     errVec(nSamplesX) = mean(abs(empF(2:end) - normcdf(param(2:end), 0, 1)));
+% end
+for nSamplesX = 1:maxSamplesX
+    xMat(:, 1:nSamplesX) = normrnd(mu, sigma, nSamplesStat, nSamplesX); %rand(nSamplesStat, nSamplesX);
+    % calculate nSamplesStat statistics for nSamplesX
+    statVec = sqrt(nSamplesX) * (sum(xMat - mu, 2) ./ nSamplesX) / sigma;
+    [empF, param] = ecdf(statVec);
+    if (mod(nSamplesX, maxSamplesX / 10) == 0)
+        figure();
+        normplot(statVec);
+%         pause(.001);
+    end
+    errVec(nSamplesX) = mean(abs(empF(2:end) - normcdf(param(2:end), 0, 1)));
+end
+figure();
+plot((1:maxSamplesX)', errVec);
+set(gca,'Xscale','log');
+grid on;
+grid minor;
+%% intervals
+alpha = .1
+sampleSize = 1e3;
+sigma = 2;
+mu = 1;
+xVec = sqrt(sigma).*normVN(sampleSize) + mu;
+eEmp = mean(xVec)
+varEmp = sum((xVec - eEmp).^2) ./ (sampleSize - 1)
+disp('Mean interval bounds with alpha:');
+tQuant = tinv(1 - alpha./2, sampleSize - 1);
+leftBound = eEmp - tQuant * varEmp / sqrt(sampleSize)
+rightBound = eEmp + tQuant * varEmp / sqrt(sampleSize)
+disp('Variation interval bounds with 1 - alpha:');
+chiQuantLeft = chi2inv((1 + alpha) ./ 2, sampleSize - 1);
+chiQuantRight = chi2inv((1 - alpha) ./ 2, sampleSize - 1);
+
+leftBound = (sampleSize - 1) * varEmp.^2 ./ chiQuantLeft
+rightBound = (sampleSize - 1) * varEmp.^2 ./ chiQuantRight
+
+%% cauchy
+n = 1e3;
+a = 0;
+b = 1;
+xVec = cauchrnd(n, a, b);
+sN = cumsum(xVec);
+nVec = (1:n)';
+cltVec = sN ./ nVec;
+figure();
+plot(nVec, cltVec);
+grid on;
+grid minor;
+figure();
+[sumF, x] = ecdf(cltVec);
+[baseF, x] = ecdf(xVec);
+plot(y, baseF, 'Color', 'red', 'LineWidth', 3.0);
+hold on;
+plot(x, sumF, 'Color', 'blue', 'LineWidth', 2.0);

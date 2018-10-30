@@ -27,23 +27,17 @@ normVec = [normVec; normVN(mod(sampleSize, memoryConst))];
 figure();
 normplot(normVec);
 %% 
-maxSize = 1e3;
+maxSize = 1e2;
 times = 1e2;
 samplingTimes = 10;
 lsp = linspace(1, maxSize, times)';
-deltaVN = zeros(times, 1);
-deltaP = zeros(times, 1);
 for sampleSize = 1:times
     curSize = (sampleSize - 1) * (maxSize / times) + max(mod(sampleSize, maxSize), 1);
     for i = 1:samplingTimes
         [fVN, x] = ecdf(normVN(curSize));
         deltaVN(sampleSize) = deltaVN(sampleSize) + mean(abs(fVN(2:end) - normcdf(x(2:end), 0, 1)));
         [fP, x] = ecdf(normPolar(curSize));
-        deltaP(sampleSize) = deltaP(sampleSize) + mean(abs(fP(2:end) - normcdf(x(2:end), 0, 1)));
-    end
-    deltaVN(sampleSize) = deltaVN(sampleSize) ./ samplingTimes;
-    deltaP(sampleSize) = deltaP(sampleSize) ./ samplingTimes;
-    
+        deltaP(sampleSize) = mean(abs(fP(2:end) - normcdf(x(2:end), 0, 1)));
 end
 figure();
 plot(lsp, deltaVN, 'r');
